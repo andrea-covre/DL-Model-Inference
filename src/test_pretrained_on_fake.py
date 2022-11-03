@@ -10,14 +10,29 @@ from custom_dataset_loader import FakeCIFAR10
 from utils import show
 
 
+CIFAR10_CLASSES_MAP = {
+    "airplane": 0,
+    "automobile": 1, 
+    "bird": 2, 
+    "cat": 3, 
+    "deer": 4, 
+    "dog": 5, 
+    "frog": 6, 
+    "horse": 7, 
+    "ship": 8, 
+    "truck": 9
+}
+
+torch.set_printoptions(linewidth=120)
+
 transform_train = transforms.Compose([
     transforms.ToTensor(),
-    #transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)), # Original
+    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)), # Original
     #transforms.Normalize((0.4919, 0.4827, 0.4472), (0.2470, 0.2434, 0.2616)) 
 ])
 
 real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
-fake_dataset = FakeCIFAR10("datasets/Fake-CIFAR-10-validation-data", transform=transform_train)
+fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
 
 dataset = fake_dataset
 train_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
@@ -29,10 +44,14 @@ resnet56.eval()
 permutations = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]
 permutations = [permutations[0]]
 
+
+confusion_matrix = torch.zeros((10, 10))
+
+
 for permutation in permutations:
     cnt = 0
     
-    iterations = 10
+    iterations = 10000
     for i in range(iterations):
         img, label = next(iter(train_dataloader))
         
@@ -47,7 +66,9 @@ for permutation in permutations:
         
         img = torch.squeeze(img)
         
-        show(img)
+        #show(img)
+        
+        confusion_matrix[CIFAR10_CLASSES_MAP[dataset.classes[label]], CIFAR10_CLASSES_MAP[dataset.classes[prediction]]] += 1
         
         if 0:
             img = torch.squeeze(img)
@@ -75,4 +96,11 @@ for permutation in permutations:
         #print()
         
     print(f"Accuracy: {cnt/iterations*100}% for image permutation {permutation}")
+    
+    row_sums = confusion_matrix.sum(axis=1)
+    confusion_matrix 
+    confusion_matrix = torch.round(confusion_matrix / row_sums[:, None], decimals=4)
+    
+    print(confusion_matrix)
         
+    print(row_sums)
