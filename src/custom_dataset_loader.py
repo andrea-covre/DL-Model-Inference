@@ -15,23 +15,23 @@ transform_train = transforms.Compose([
 
 
 class FakeCIFAR10(Dataset):
-    def __init__(self, img_dir, transform=None, target_transform=None):
-        self.img_dir = img_dir
+    TRAIN_PATH = "datasets/Fake-CIFAR-10-training-data"
+    VALIDATION_PATH = "datasets/Fake-CIFAR-10-validation-data"
+    
+    def __init__(self, train=True, transform=None, target_transform=None):
+        self.img_dir = self.TRAIN_PATH if train else self.VALIDATION_PATH
         self.transform = transform
         self.target_transform = target_transform
         
-        self.label_names = []
+        self.classes = []
         self.img_labels = []
         self.img_paths = []
         
         class_index = 0
-        for class_dir in os.listdir(img_dir):
-            if class_dir == ".DS_Store":
-                continue
-            
-            self.label_names.append(class_dir)
+        for class_dir in os.listdir(self.img_dir):
+            self.classes.append(class_dir)
 
-            for img_name in os.listdir(os.path.join(img_dir, class_dir)):
+            for img_name in os.listdir(os.path.join(self.img_dir, class_dir)):
                 self.img_paths.append(os.path.join(self.img_dir, class_dir, img_name))
                 self.img_labels.append(class_index)
                 
@@ -54,7 +54,7 @@ class FakeCIFAR10(Dataset):
         return image, label
     
 def main():
-    dataset = FakeCIFAR10("datasets/Fake-CIFAR-10-training-data")
+    dataset = FakeCIFAR10(train=True)
 
     train_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
