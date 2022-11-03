@@ -1,0 +1,19 @@
+Request 9995 for "frog" : 200
+Request 9996 for "car" : 200
+Request 9997 for "ship" : 200
+Request 9998 for "dog" : 200
+Request 9999 for "truck" : 200
+Request 10000 for "frog" : 200
+HTTP requests: 10000
+  airplane: 8982
+  car: 9000
+  bird: 8973
+  cat: 8982
+  deer: 8982
+  dog: 8973
+  frog: 8982
+  horse: 8955
+  ship: 8973
+  truck: 9000
+Total images mined: 89802
+Time elapsed: 3098.04 s
