@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
 
 from src.custom_dataset_loader import FakeCIFAR10
-from utils import show
 
 
 CIFAR10_CLASSES_MAP = {
@@ -35,8 +34,8 @@ def main():
     real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
     fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
 
-    dataset = fake_dataset
-    train_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+    dataset = real_dataset
+    test_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True)
 
@@ -45,9 +44,9 @@ def main():
     confusion_matrix = torch.zeros((10, 10))
 
     cnt = 0
-    iterations = 1000
+    iterations = len(test_dataloader)
     for i in range(iterations):
-        img, label = next(iter(train_dataloader))
+        img, label = next(iter(test_dataloader))
 
         prediction = torch.argmax(resnet56(img))
         

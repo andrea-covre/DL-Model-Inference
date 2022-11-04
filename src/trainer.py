@@ -48,6 +48,7 @@ class Trainer:
                 running_loss += loss.item()
 
             print(f'Epoch: {epoch}, running loss: {running_loss}')
+            torch.save(self.model.state_dict(), 'saved_models/fake_resnet56_auto_save.pth')
             
         print('Finished Training')
 
