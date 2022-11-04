@@ -45,11 +45,9 @@ class Trainer:
                 loss.backward()
                 self.optimizer.step()
 
-                # print statistics
                 running_loss += loss.item()
-                if i % 2000 == 1999:    # print every 2000 mini-batches
-                    print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-                    running_loss = 0.0
+
+            print(f'Epoch: {epoch}, running loss: {running_loss}')
             
         print('Finished Training')
 
@@ -63,7 +61,7 @@ class Trainer:
     def evaluate(self):
         self.model.eval()
         
-        confusion_matrix = ConfusionMatrix(num_classes=10, normalize=None)
+        confusion_matrix = ConfusionMatrix(num_classes=10, normalize=None).to(self.device)
         
         correct_predictions = 0
         with torch.no_grad():
@@ -77,7 +75,6 @@ class Trainer:
                 correct_predictions += torch.sum(predictions==labels)
                 confusion_matrix.update(predictions, labels)    
 
-        print(len(self.test_loader.dataset))
         accuracy = correct_predictions / len(self.test_loader.dataset)
                     
         return accuracy, confusion_matrix
@@ -106,7 +103,7 @@ def main():
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005)
 
-    trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=1)
+    trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=200)
     
     accuracy, confusion_matrix = trainer.run()
     print(f"Accuracy: {accuracy*100}%")
