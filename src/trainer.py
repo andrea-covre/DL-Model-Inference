@@ -48,8 +48,6 @@ class Trainer:
                 if i % 2000 == 1999:    # print every 2000 mini-batches
                     print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
                     running_loss = 0.0
-                    
-                break
             
         print('Finished Training')
 
@@ -79,7 +77,6 @@ class Trainer:
 
         print(len(self.test_loader.dataset))
         accuracy = correct_predictions / len(self.test_loader.dataset)
-        print(f"Accuracy: {accuracy*100}%")
                     
         return accuracy, confusion_matrix
     
@@ -110,6 +107,7 @@ def main():
     trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=1)
     
     accuracy, confusion_matrix = trainer.run()
+    print(f"Accuracy: {accuracy*100}%")
     print(confusion_matrix.compute())
 
 
