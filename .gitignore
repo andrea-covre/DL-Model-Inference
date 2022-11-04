@@ -8,3 +8,6 @@
 pretrained_models/
 datasets/cifar-10-batches-py
 *.gz
+
+# Saved models
+saved_models/

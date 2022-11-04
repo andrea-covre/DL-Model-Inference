@@ -53,7 +53,8 @@ class Trainer:
             
         print('Finished Training')
 
-    def save_model(self, path='./fake_resnet56.pth'):
+    def save_model(self, path='saved_models/fake_resnet56.pth'):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         if os.path.exists(path):
             path = path.replace('.pth', '_new.pth')
             
@@ -76,7 +77,8 @@ class Trainer:
                 correct_predictions += torch.sum(predictions==labels)
                 confusion_matrix.update(predictions, labels)    
 
-        accuracy = correct_predictions / len(self.test_loader)
+        print(len(self.test_loader.dataset))
+        accuracy = correct_predictions / len(self.test_loader.dataset)
         print(f"Accuracy: {accuracy*100}%")
                     
         return accuracy, confusion_matrix
