@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
 
-from custom_dataset_loader import FakeCIFAR10
+from src.custom_dataset_loader import FakeCIFAR10
 from utils import show
 
 

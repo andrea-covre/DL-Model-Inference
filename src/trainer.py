@@ -10,7 +10,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchmetrics import ConfusionMatrix
 
-from custom_dataset_loader import FakeCIFAR10
+from src.custom_dataset_loader import FakeCIFAR10
 
 
 class Trainer:
