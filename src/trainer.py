@@ -24,7 +24,6 @@ class Trainer:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
         print(f'Using device: {self.device}')
-        exit()
         
     def train(self):
         self.model.to(self.device)
