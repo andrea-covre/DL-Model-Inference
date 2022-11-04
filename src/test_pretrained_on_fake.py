@@ -23,43 +23,35 @@ CIFAR10_CLASSES_MAP = {
     "truck": 9
 }
 
-torch.set_printoptions(linewidth=120)
+def main():
+    torch.set_printoptions(linewidth=120)
 
-transform_train = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)), # Original
-    #transforms.Normalize((0.4919, 0.4827, 0.4472), (0.2470, 0.2434, 0.2616)) 
-])
+    transform_train = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)), # Original
+        #transforms.Normalize((0.4919, 0.4827, 0.4472), (0.2470, 0.2434, 0.2616)) 
+    ])
 
-real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
-fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
+    real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
+    fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
 
-dataset = fake_dataset
-train_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+    dataset = fake_dataset
+    train_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
-resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True)
+    resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True)
 
-resnet56.eval()
+    resnet56.eval()
 
-permutations = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]
-permutations = [permutations[0]]
+    confusion_matrix = torch.zeros((10, 10))
 
-
-confusion_matrix = torch.zeros((10, 10))
-
-
-for permutation in permutations:
     cnt = 0
-    
-    iterations = 10000
+    iterations = 1000
     for i in range(iterations):
         img, label = next(iter(train_dataloader))
-        
-        img = img[:, permutation]
-    
+
         prediction = torch.argmax(resnet56(img))
         
-        #print(f"Prediction: {dataset.classes[prediction]:<10}  Label: {dataset.classes[label]:<10} >> {bool(prediction==label)}")
+        print(f"Prediction: {dataset.classes[prediction]:<10}  Label: {dataset.classes[label]:<10} >> {bool(prediction==label)}")
         
         if prediction==label:
             cnt += 1
@@ -93,14 +85,16 @@ for permutation in permutations:
             axarr[1,1].imshow(b_img.squeeze().permute(1, 2, 0))
             plt.show()
             
-        #print()
+    print(f"Accuracy: {cnt/iterations*100}%")
         
-    print(f"Accuracy: {cnt/iterations*100}% for image permutation {permutation}")
-    
     row_sums = confusion_matrix.sum(axis=1)
     confusion_matrix 
     confusion_matrix = torch.round(confusion_matrix / row_sums[:, None], decimals=4)
-    
+        
     print(confusion_matrix)
         
     print(row_sums)
+
+
+if __name__ == "__main__":
+    main()

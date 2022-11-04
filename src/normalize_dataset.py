@@ -37,3 +37,4 @@ Mean and std used to train resnet56 on CIFAR10: (0.4914, 0.4822, 0.4465), (0.202
 Real dataset mean and std: (0.4919, 0.4827, 0.4472), (0.2470, 0.2434, 0.2616)
 Fake dataset mean and std: (0.4689, 0.4952, 0.4226), (0.2463, 0.2468, 0.2799)
 """
+
