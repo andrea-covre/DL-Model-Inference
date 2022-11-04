@@ -49,7 +49,7 @@ class Trainer:
 
             print(f'Epoch: {epoch}, running loss: {running_loss}')
             
-            os.makedirs(os.path.dirname("saved_models"), exist_ok=True)
+            os.makedirs(os.path.dirname('saved_models/fake_resnet56_auto_save.pth'), exist_ok=True)
             torch.save(self.model.state_dict(), 'saved_models/fake_resnet56_auto_save.pth')
             
         print('Finished Training')
