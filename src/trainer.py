@@ -6,11 +6,14 @@ main() contans an example of how to use this class
 
 import os
 import torch
+import torchvision
 import torch.optim as optim 
 from torch.utils.data import DataLoader
 from torchmetrics import ConfusionMatrix
 
 from src.custom_dataset_loader import FakeCIFAR10
+
+torch.set_printoptions(linewidth=120)
 
 
 class Trainer:
@@ -46,6 +49,7 @@ class Trainer:
                 self.optimizer.step()
 
                 running_loss += loss.item()
+                
 
             print(f'Epoch: {epoch}, running loss: {running_loss}')
             
@@ -64,7 +68,7 @@ class Trainer:
     def evaluate(self):
         self.model.eval()
         
-        confusion_matrix = ConfusionMatrix(num_classes=10, normalize=None).to(self.device)
+        confusion_matrix = ConfusionMatrix(num_classes=10, normalize='true').to(self.device)
         
         correct_predictions = 0
         with torch.no_grad():
@@ -89,26 +93,39 @@ class Trainer:
             self.save_model()
             
         return self.evaluate()
+    
+    def _load_model(self, path):
+        self.model.load_state_dict(torch.load(path, map_location=self.device))
         
+    def test_loaded_model(self, path='saved_models/fake_resnet56.pth'):
+        self._load_model(path)
+        return self.evaluate()
 
 def main():
 
     fake_train_set = FakeCIFAR10(train=True, transform=FakeCIFAR10.standard_transform)
     fake_test_set = FakeCIFAR10(train=False, transform=FakeCIFAR10.standard_transform)
+    
+    real_test_set = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=FakeCIFAR10.standard_transform)
+    
+    train_set = fake_train_set
+    test_set = real_test_set
 
-    train_dataloader = DataLoader(fake_train_set, batch_size=256, shuffle=True)
-    test_dataloader = DataLoader(fake_test_set, batch_size=256, shuffle=True)
+    train_dataloader = DataLoader(train_set, batch_size=256, shuffle=True)
+    test_dataloader = DataLoader(test_set, batch_size=256, shuffle=True)
 
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=False)
     
     model = resnet56
 
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005)
+    optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005, nesterov=True)
 
     trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=200)
     
-    accuracy, confusion_matrix = trainer.run()
+    # accuracy, confusion_matrix = trainer.run()
+    accuracy, confusion_matrix = trainer.test_loaded_model("fake_resnet56_auto_save.pth")
+    
     print(f"Accuracy: {accuracy*100}%")
     print(confusion_matrix.compute())
 
