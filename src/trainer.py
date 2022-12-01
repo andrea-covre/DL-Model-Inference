@@ -32,6 +32,7 @@ class Trainer:
         self.model.to(self.device)
         self.model.train()
 
+        min_loss = float('inf')
         for epoch in range(self.epochs):  # loop over the dataset multiple times
             running_loss = 0.0
             for i, data in enumerate(self.train_loader, 0):
@@ -53,8 +54,10 @@ class Trainer:
 
             print(f'Epoch: {epoch}, running loss: {running_loss}')
             
-            os.makedirs(os.path.dirname('saved_models/fake_resnet56_auto_save.pth'), exist_ok=True)
-            torch.save(self.model.state_dict(), 'saved_models/fake_resnet56_auto_save.pth')
+            if (running_loss < min_loss):
+                min_loss = running_loss
+                os.makedirs(os.path.dirname('saved_models/fake_resnet56_auto_save.pth'), exist_ok=True)
+                torch.save(self.model.state_dict(), 'saved_models/fake_resnet56_auto_save.pth')
             
         print('Finished Training')
 
@@ -115,16 +118,17 @@ def main():
     test_dataloader = DataLoader(test_set, batch_size=256, shuffle=True)
 
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=False)
+    repvgg_a2 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_repvgg_a2", pretrained=True)
     
-    model = resnet56
+    model = repvgg_a2
 
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005, nesterov=True)
 
     trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=200)
     
-    accuracy, confusion_matrix = trainer.run()
-    #accuracy, confusion_matrix = trainer.test_loaded_model("fake_resnet56_auto_save.pth")
+    #accuracy, confusion_matrix = trainer.run()
+    accuracy, confusion_matrix = trainer.test_loaded_model("fake_resnet56_auto_save.pth")
     
     print(f"Accuracy: {accuracy*100}%")
     print(confusion_matrix.compute())

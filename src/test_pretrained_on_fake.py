@@ -34,12 +34,15 @@ def main():
     real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
     fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
 
-    dataset = real_dataset
+    dataset = fake_dataset
     test_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True)
-
-    resnet56.eval()
+    repvgg_a2 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_repvgg_a2", pretrained=True)
+    
+    model = repvgg_a2
+    
+    model.eval()
 
     confusion_matrix = torch.zeros((10, 10))
 
@@ -48,7 +51,7 @@ def main():
     for i in range(iterations):
         img, label = next(iter(test_dataloader))
 
-        prediction = torch.argmax(resnet56(img))
+        prediction = torch.argmax(model(img))
         
         print(f"Prediction: {dataset.classes[prediction]:<10}  Label: {dataset.classes[label]:<10} >> {bool(prediction==label)}")
         
