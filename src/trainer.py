@@ -127,8 +127,8 @@ def main():
 
     trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=200)
     
-    #accuracy, confusion_matrix = trainer.run()
-    accuracy, confusion_matrix = trainer.test_loaded_model("fake_resnet56_auto_save.pth")
+    accuracy, confusion_matrix = trainer.run()
+    #accuracy, confusion_matrix = trainer.test_loaded_model("fake_resnet56_auto_save.pth")
     
     print(f"Accuracy: {accuracy*100}%")
     print(confusion_matrix.compute())
