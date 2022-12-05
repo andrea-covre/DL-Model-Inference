@@ -53,8 +53,9 @@ class Trainer:
 
                 running_loss += loss.item()
                 
+                print(f"{i/len(self.train_loader)*100:.2f}%: {loss.item():.4f}")
 
-            print(f'Epoch: {epoch}, running loss: {running_loss}')
+            print(f'\nEpoch: {epoch}, running loss: {running_loss}')
             
             if (running_loss < min_loss):
                 min_loss = running_loss
