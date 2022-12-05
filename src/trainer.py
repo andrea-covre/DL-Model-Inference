@@ -12,6 +12,8 @@ from torch.utils.data import DataLoader
 from torchmetrics import ConfusionMatrix
 
 from src.custom_dataset_loader import FakeCIFAR10
+from src.mixed_dataset_2 import MixedCIFAR10_2
+from src.resnet_mixed import get_custom_output_resent
 
 torch.set_printoptions(linewidth=120)
 
@@ -75,7 +77,7 @@ class Trainer:
         
         correct_predictions = 0
         with torch.no_grad():
-            for data in self.test_loader:
+            for idx, data in enumerate(self.test_loader):
                 images, labels = data
                 images, labels = images.to(self.device), labels.to(self.device)
                 
@@ -84,6 +86,8 @@ class Trainer:
                 
                 correct_predictions += torch.sum(predictions==labels)
                 confusion_matrix.update(predictions, labels)    
+                
+                print(f"{round(idx/len(self.test_loader)*100, 2)}% \t Correct Predictions: {correct_predictions:<20}", end='\r')
 
         accuracy = correct_predictions / len(self.test_loader.dataset)
                     
@@ -109,10 +113,14 @@ def main():
     fake_train_set = FakeCIFAR10(train=True, transform=FakeCIFAR10.standard_transform)
     fake_test_set = FakeCIFAR10(train=False, transform=FakeCIFAR10.standard_transform)
     
+    mixed_2_train_set = MixedCIFAR10_2(train=True, transform=MixedCIFAR10_2.standard_transform)
+    mixed_2_test_set = MixedCIFAR10_2(train=False, transform=MixedCIFAR10_2.standard_transform)
+    
     real_test_set = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=FakeCIFAR10.standard_transform)
     
-    train_set = fake_train_set
-    test_set = fake_test_set
+    # Dataset selection ----------------------
+    train_set = mixed_2_train_set
+    test_set = mixed_2_test_set
 
     train_dataloader = DataLoader(train_set, batch_size=256, shuffle=True)
     test_dataloader = DataLoader(test_set, batch_size=256, shuffle=True)
@@ -120,15 +128,26 @@ def main():
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=False)
     repvgg_a2 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_repvgg_a2", pretrained=True)
     
-    model = repvgg_a2
+    resent52_2 = get_custom_output_resent(2)
+    
+    
+    # Model selection ----------------------
+    model = resent52_2
 
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005, nesterov=True)
 
     trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=200)
     
+    # To train and save model
     accuracy, confusion_matrix = trainer.run()
+    
+    # To test saved model
     #accuracy, confusion_matrix = trainer.test_loaded_model("fake_resnet56_auto_save.pth")
+    
+    # To test model from memory
+    #accuracy, confusion_matrix = trainer.evaluate()
+    
     
     print(f"Accuracy: {accuracy*100}%")
     print(confusion_matrix.compute())
