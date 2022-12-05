@@ -33,6 +33,9 @@ def main():
 
     real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
     fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
+    
+    mixed_20_train_set = MixedCIFAR10_20(train=True, transform=MixedCIFAR10_20.standard_transform)
+    mixed_20_test_set = MixedCIFAR10_20(train=False, transform=MixedCIFAR10_20.standard_transform)
 
     dataset = fake_dataset
     test_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
@@ -40,7 +43,7 @@ def main():
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True)
     repvgg_a2 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_repvgg_a2", pretrained=True)
     
-    model = repvgg_a2
+    model = resnet56
     
     model.eval()
 

@@ -118,11 +118,14 @@ def main():
     mixed_2_train_set = MixedCIFAR10_2(train=True, transform=MixedCIFAR10_2.standard_transform)
     mixed_2_test_set = MixedCIFAR10_2(train=False, transform=MixedCIFAR10_2.standard_transform)
     
+    mixed_20_train_set = MixedCIFAR10_20(train=True, transform=MixedCIFAR10_20.standard_transform)
+    mixed_20_test_set = MixedCIFAR10_20(train=False, transform=MixedCIFAR10_20.standard_transform)
+    
     real_test_set = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=FakeCIFAR10.standard_transform)
     
     # Dataset selection ----------------------
-    train_set = mixed_2_train_set
-    test_set = mixed_2_test_set
+    train_set = mixed_20_train_set
+    test_set = mixed_20_test_set
 
     train_dataloader = DataLoader(train_set, batch_size=256, shuffle=True)
     test_dataloader = DataLoader(test_set, batch_size=256, shuffle=True)
@@ -130,11 +133,11 @@ def main():
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=False)
     repvgg_a2 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_repvgg_a2", pretrained=True)
     
-    resent52_2 = get_custom_output_resent(20)
+    resent52_20 = get_custom_output_resent(20)
     
     
     # Model selection ----------------------
-    model = resent52_2
+    model = resent52_20
 
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005, nesterov=True)

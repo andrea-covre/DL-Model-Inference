@@ -15,7 +15,7 @@ class Item:
         self.img = img
         self.label = label if type == "fake" else label + 10
 
-class MixedCIFAR10_2(Dataset):
+class MixedCIFAR10_20(Dataset):
     TRAIN_PATH = "datasets/Fake-CIFAR-10-training-data"
     VALIDATION_PATH = "datasets/Fake-CIFAR-10-validation-data"
     CIFAR10_CLASSES_MAP = {
@@ -54,13 +54,19 @@ class MixedCIFAR10_2(Dataset):
             transforms.ToTensor(),
         ])
         
-        self.classes = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
+        self.classes_dir = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
+        
+        self.classes = []
+        for type in ["fake", "real"]:
+            for class_name in self.classes_dir:
+                self.classes.append(type + "_" + class_name)
+        
 
         self.data = []
         
         # Adding fake CIFAR10 images
         class_index = 0
-        for class_dir in self.classes:
+        for class_dir in self.classes_dir:
             
             if class_dir == ".DS_Store":
                 continue
