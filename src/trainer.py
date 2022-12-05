@@ -13,6 +13,7 @@ from torchmetrics import ConfusionMatrix
 
 from src.custom_dataset_loader import FakeCIFAR10
 from src.mixed_dataset_2 import MixedCIFAR10_2
+from src.mixed_dataset_20 import MixedCIFAR10_20
 from src.resnet_mixed import get_custom_output_resent
 
 torch.set_printoptions(linewidth=120)
@@ -129,7 +130,7 @@ def main():
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=False)
     repvgg_a2 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_repvgg_a2", pretrained=True)
     
-    resent52_2 = get_custom_output_resent(2)
+    resent52_2 = get_custom_output_resent(20)
     
     
     # Model selection ----------------------
