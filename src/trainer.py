@@ -53,7 +53,7 @@ class Trainer:
 
                 running_loss += loss.item()
                 
-                print(f"{i/len(self.train_loader)*100:.2f}%: {loss.item():.4f}")
+                print(f"{i/len(self.train_loader)*100:.2f}%: {loss.item():.4f}", end='\r')
 
             print(f'\nEpoch: {epoch}, running loss: {running_loss}')
             
