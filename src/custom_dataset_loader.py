@@ -65,6 +65,7 @@ class FakeCIFAR10(Dataset):
         label = self.img_labels[idx]
         
         if self.transform:
+            print("transformed!")
             image = self.transform(image)
             
         if self.target_transform:

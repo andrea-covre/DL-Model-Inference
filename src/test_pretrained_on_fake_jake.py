@@ -37,14 +37,15 @@ def main():
     ])
 
     real_dataset = torchvision.datasets.CIFAR10(root='./pretrained_models', train=False, download=True, transform=transform_train)
-    fake_dataset = FakeCIFAR10(train=False, transform=transform_train)
+    fake_dataset = FakeCIFAR10(train=False, transform=FakeCIFAR10.standard_transform)
 
     dataset = real_dataset
     test_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
     resnet56 = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True)
 
-    our_net = resnet56.load_state_dict(torch.load("../fake_resnet56_auto_save.pth", map_location=device))
+    # this should be our trained model now!
+    resnet56.load_state_dict(torch.load("../fake_resnet56_auto_save.pth", map_location=device))
 
     #our_net.eval()
 
@@ -54,6 +55,10 @@ def main():
     iterations = len(test_dataloader)
     for i in range(iterations):
         img, label = next(iter(test_dataloader))
+
+        # print("attempting to Normalize it :)")
+        # print(img)
+        # img = transform_train(np.array(img[0, :, :, :]))
 
         prediction = torch.argmax(resnet56(img))
         

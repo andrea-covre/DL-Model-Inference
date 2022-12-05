@@ -35,7 +35,7 @@ class FakeCIFAR10(Dataset):
         transforms.Normalize(mean, std),
     ])
     
-    def __init__(self, train=True, transform=None, target_transform=None):
+    def __init__(self, train=True, transform=standard_transform, target_transform=None):
         self.img_dir = self.TRAIN_PATH if train else self.VALIDATION_PATH
         self.transform = transform
         self.target_transform = target_transform
@@ -51,6 +51,8 @@ class FakeCIFAR10(Dataset):
                 continue
 
             for img_name in os.listdir(os.path.join(self.img_dir, class_dir)):
+                if img_name == ".DS_Store":
+                    continue
                 self.img_paths.append(os.path.join(self.img_dir, class_dir, img_name))
                 self.img_labels.append(self.CIFAR10_CLASSES_MAP[class_dir])
                 
@@ -65,6 +67,7 @@ class FakeCIFAR10(Dataset):
         label = self.img_labels[idx]
         
         if self.transform:
+            #print("transformed!")
             image = self.transform(image)
             
         if self.target_transform:
