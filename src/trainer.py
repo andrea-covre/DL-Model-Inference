@@ -140,7 +140,7 @@ def main():
     model = resent52_20
 
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0008, nesterov=True)
+    optimizer = optim.SGD(model.parameters(), lr=0.13, momentum=0.9, weight_decay=0.0005, nesterov=True)
 
     trainer = Trainer(model, train_dataloader, test_dataloader, optimizer, criterion, epochs=200)
     
