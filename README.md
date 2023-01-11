@@ -10,6 +10,10 @@ Through this project, we investigate whether Generative Deep Learning Models (su
 [<img src="docs/Final_Report_front_page.png" alt="Research Report" width="50%">](Report.pdf)
 
 
+## Research Poster
+[<img src="Poster.png" alt="Research Poster">](Poster.png)
+
+
 ## Contributors
 Andrea Covre - [andrea.covre@gatech.edu](mailto:andrea.covre@gatech.edu)
 <br>
