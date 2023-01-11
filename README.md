@@ -7,11 +7,7 @@ Through this project, we investigate whether Generative Deep Learning Models (su
 
 ## Research Paper
 
-![some discription](Report.pdf "some discription")
-<embed src="Report.pdf" type="application/pdf">
-<object data="Report.pdf" type="application/pdf" width="100%"> 
-</object>
-
+[<img src="docs/Final_Report_front_page.png" alt="Research Report" width="50%">](Report.pdf)
 
 
 ## Contributors
